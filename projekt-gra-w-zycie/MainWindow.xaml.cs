@@ -23,8 +23,8 @@ namespace GraWZycie
 
         private void ShowGameWindow(object sender, RoutedEventArgs e)
         {
-            new GameWindow().Show();
-            Close();
+            new GameWindow(this).Show();
+            Hide();
         }
     }
 }

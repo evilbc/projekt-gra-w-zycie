@@ -20,6 +20,9 @@ namespace GraWZycie
         public ICommand NextGenerationCommand { get; }
         public ICommand RandomiseCommand { get; }
         public ICommand CleanCommand { get; }
+        public int GenerationCount => _game.GenerationCount;
+        public int DeathCount => _game.DeathCount;
+        public int BirthCount => _game.BirthCount;
 
 
         private readonly Game _game;
