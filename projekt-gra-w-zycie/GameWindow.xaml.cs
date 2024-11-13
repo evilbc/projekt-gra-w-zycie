@@ -24,7 +24,6 @@ namespace GraWZycie
     {
         private readonly MainWindow _mainWindow;
 
-        private DispatcherTimer _gameTimer { get; }
         private readonly GameViewModel _game;
         private bool _isReturnToMainMenu { get; set; }
 
@@ -33,25 +32,24 @@ namespace GraWZycie
         {
             _mainWindow = mainWindow;
             InitializeComponent();
-            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset);
+            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(), new UserMessageService());
             DataContext = _game;
 
             CreateGrid();
             CreateKeyBindings();
 
-            _gameTimer = new DispatcherTimer();
-            _gameTimer.Interval = TimeSpan.FromSeconds(1);
-            _gameTimer.Tick += (sender, args) => _game.CalculateNewGeneration();
         }
 
         private void CreateKeyBindings()
         {
-            AddBinding(new RelayCommand(ReturnToMainMenu), Key.Escape);
+            AddBinding(_game.ReturnToMainMenuCommand, Key.Escape);
             AddBinding(_game.NextGenerationCommand, Key.A);
             AddBinding(_game.RandomiseCommand, Key.R);
             AddBinding(_game.CleanCommand, Key.C);
-            AddBinding(new RelayCommand(ToggleAutoplay), Key.P);
-            AddBinding(new RelayCommand(ShowStats), Key.I);
+            AddBinding(_game.ToggleAutoplayCommand, Key.P);
+            AddBinding(_game.ShowStatsCommand, Key.I);
+            AddBinding(_game.SpeedUpCommand, Key.Up);
+            AddBinding(_game.SlowDownCommand, Key.Down);
         }
 
         private void CreateGrid()
@@ -80,24 +78,11 @@ namespace GraWZycie
             }
         }
 
-        private void ReturnToMainMenu()
+        public void ReturnToMainMenu()
         {
             _isReturnToMainMenu = true;
             _mainWindow.Show();
             Close();
-        }
-
-        private void ToggleAutoplay()
-        {
-            if (_gameTimer.IsEnabled)
-                _gameTimer.Stop();
-            else
-                _gameTimer.Start();
-        }
-
-        private void ShowStats()
-        {
-            MessageBox.Show($"Liczba pokoleń: {_game.GenerationCount}, liczba umarłych: {_game.DeathCount}, liczba urodzonych: {_game.BirthCount}");
         }
 
         protected override void OnClosed(EventArgs e)

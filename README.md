@@ -8,5 +8,6 @@ R - random
 I - info / statistics
 C - clean
 Escape - return to main menu
+Up/Down - speed up / slow down
 
 Mouse scroll - zoom
