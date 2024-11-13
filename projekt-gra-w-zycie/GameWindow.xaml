@@ -19,6 +19,7 @@
         <KeyBinding Key="X" Command="{Binding SlowDownCommand}" />
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
+        <KeyBinding Key="Q" Command="{Binding ChangeShapeCommand}" />
     </Window.InputBindings>
 
     <Window.Resources>
@@ -27,7 +28,7 @@
         <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
         <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
 
-            <Border x:Name="border" BorderBrush="Gray" BorderThickness="1">
+            <Border x:Name="border" BorderBrush="Gray" BorderThickness="1" CornerRadius="{Binding DataContext.CornerRadius, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
                 <Border.Background>
                     <SolidColorBrush x:Name="brush" Color="White"></SolidColorBrush>
                 </Border.Background>

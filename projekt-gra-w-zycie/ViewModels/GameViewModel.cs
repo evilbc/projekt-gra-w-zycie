@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using GraWZycie.Models;
@@ -36,6 +37,7 @@ namespace GraWZycie.ViewModels
         public ICommand LoadCommand => new RelayCommand(LoadFromFile);
         public ICommand ZoomInCommand => new RelayCommand(ZoomIn);
         public ICommand ZoomOutCommand => new RelayCommand(ZoomOut);
+        public ICommand ChangeShapeCommand => new RelayCommand(() => IsCircle = !IsCircle);
 
         private double _availableWidth;
         public double AvailableWidth
@@ -58,8 +60,7 @@ namespace GraWZycie.ViewModels
             }
         }
         public double CellWidth => AvailableWidth / Cols * Zoom;
-        public double CellHeight => AvailableHeight / Cols * Zoom;
-
+        public double CellHeight => AvailableHeight / Rows * Zoom;
 
         private DispatcherTimer _gameTimer { get; }
         private List<TimeSpan> _timerSpeeds = [TimeSpan.FromSeconds(0.3), TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.75), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1.5), TimeSpan.FromSeconds(2)];
@@ -76,10 +77,25 @@ namespace GraWZycie.ViewModels
                 OnPropertyChanged(nameof(CellHeight));
                 OnPropertyChanged(nameof(CellWidth));
                 OnPropertyChanged(nameof(IsScrollVisible));
+                OnPropertyChanged(nameof(CornerRadius));
             }
         }
         public bool IsScrollVisible => Zoom > 1.0;
 
+        public CornerRadius CornerRadius => new CornerRadius(IsCircle ? Math.Max(CellWidth, CellHeight) : 0);
+
+        private bool _isCircle = false;
+
+        public bool IsCircle
+        {
+            get => _isCircle;
+            set
+            {
+                _isCircle = value;
+                OnPropertyChanged(nameof(IsCircle));
+                OnPropertyChanged(nameof(CornerRadius));
+            }
+        }
 
         private Game _game;
 
@@ -102,7 +118,7 @@ namespace GraWZycie.ViewModels
             _userMessageService = userMessageService;
             _fileService = fileService;
 
-            Game = new Game(rows, cols, rules);
+            _game = new Game(rows, cols, rules);
 
             Cells = new ObservableCollection<Cell>();
             InitCells();

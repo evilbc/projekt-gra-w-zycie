@@ -7,6 +7,7 @@ A - play once
 R - random
 I - info / statistics
 C - clean
+Q - change shape
 Escape - return to main menu
 Z/X - speed up / slow down
 ctrl+s - save
