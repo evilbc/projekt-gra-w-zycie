@@ -115,11 +115,12 @@ namespace GraWZycie.ViewModels
         public void CalculateNewGeneration()
         {
             Game.CalculateNewGeneration();
+            int i = 0;
             for (int row = 0; row < Rows; row++)
             {
                 for (int col = 0; col < Cols; col++)
                 {
-                    Cells[GetCellIndex(row, col)].IsAlive = Game.Cells[row, col];
+                    Cells[i++].IsAlive = Game.Cells[row, col];
                 }
             }
 
@@ -156,19 +157,12 @@ namespace GraWZycie.ViewModels
 
         private void Randomise()
         {
-            var r = new Random();
-            foreach (var cell in Cells)
-            {
-                cell.IsAlive = r.NextDouble() > 0.5;
-            }
+            Cells.AsParallel().ForAll(cell => cell.IsAlive = Random.Shared.NextDouble() > 0.5);
         }
 
         private void Clean()
         {
-            foreach (var cell in Cells)
-            {
-                cell.IsAlive = false;
-            }
+            Cells.AsParallel().ForAll(cell => cell.IsAlive = false);
         }
 
         private void ToggleAutoplay()

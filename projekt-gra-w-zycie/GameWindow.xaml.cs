@@ -66,7 +66,7 @@ namespace GraWZycie
             }
         }
 
-        private void SizeChanged(object sender, SizeChangedEventArgs e)
+        private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _game.AvailableWidth = e.NewSize.Width;
             _game.AvailableHeight = e.NewSize.Height;

@@ -15,8 +15,8 @@
         <KeyBinding Key="C" Command="{Binding CleanCommand}" />
         <KeyBinding Key="P" Command="{Binding ToggleAutoplayCommand}" />
         <KeyBinding Key="I" Command="{Binding ShowStatsCommand}" />
-        <KeyBinding Key="Up" Command="{Binding SpeedUpCommand}" />
-        <KeyBinding Key="Down" Command="{Binding SlowDownCommand}" />
+        <KeyBinding Key="Z" Command="{Binding SpeedUpCommand}" />
+        <KeyBinding Key="X" Command="{Binding SlowDownCommand}" />
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
     </Window.InputBindings>
@@ -24,24 +24,32 @@
     <Window.Resources>
         <local:BooleanToScrollBarVisibilityConverter x:Key="BooleanToScrollBarVisibilityConverter"/>
 
-        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
-        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="TextBlock" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
+        <Style x:Key="ButtonTemplate" TargetType="TextBlock">
 
-            <Border x:Name="border" BorderBrush="Gray" BorderThickness="1">
-                <Border.Background>
-                    <SolidColorBrush x:Name="brush" Color="White"></SolidColorBrush>
-                </Border.Background>
-                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border>
+            <!-- <Border x:Name="border" BorderBrush="Gray" BorderThickness="1"> -->
+            <!--     <Border.Background> -->
+            <!--         <SolidColorBrush x:Name="brush" Color="White"></SolidColorBrush> -->
+            <!--     </Border.Background> -->
+            <!--     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" /> -->
+            <!-- </Border> -->
+            <Setter Property="TextBlock.VerticalAlignment" Value="Center" />
+            <Setter Property="TextBlock.HorizontalAlignment" Value="Center" />
+
+            <!-- Border wrapping the TextBlock for button-like appearance -->
+            <Setter Property="Background" Value="White" />
+            <!-- <Setter Property="BorderBrush" Value="Gray" /> -->
+            <!-- <Setter Property="BorderThickness" Value="1" /> -->
 
 
-            <ControlTemplate.Triggers>
+
+            <Style.Triggers>
                 <DataTrigger Binding="{Binding IsAlive}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard x:Name="ToBlackStoryboard">
                             <Storyboard>
-                                <ColorAnimation Storyboard.TargetName="brush"
-                                                Storyboard.TargetProperty="Color"
+                                <ColorAnimation
+                                                Storyboard.TargetProperty="(TextBlock.Background).(SolidColorBrush.Color)"
                                                 To="Black" Duration="0:0:0.2" />
                             </Storyboard>
                         </BeginStoryboard>
@@ -55,8 +63,8 @@
                     <DataTrigger.EnterActions>
                         <BeginStoryboard x:Name="ToWhiteStoryboard">
                             <Storyboard>
-                                <ColorAnimation Storyboard.TargetName="brush"
-                                                Storyboard.TargetProperty="Color"
+                                <ColorAnimation
+                                                Storyboard.TargetProperty="(TextBlock.Background).(SolidColorBrush.Color)"
                                                 To="White" Duration="0:0:0.2" />
                             </Storyboard>
                         </BeginStoryboard>
@@ -65,12 +73,14 @@
                         <StopStoryboard BeginStoryboardName="ToWhiteStoryboard" />
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="Board">
-        <ScrollViewer HorizontalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}" VerticalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}" SizeChanged="SizeChanged" xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
+        <ScrollViewer HorizontalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}"
+                      VerticalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}"
+                      SizeChanged="WindowSizeChanged" xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
             <i:Interaction.Behaviors>
                 <HorizontalScrollBehavior />
             </i:Interaction.Behaviors>
@@ -84,11 +94,16 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button 
-                            Command="{Binding ClickCommand}" 
-                            Template="{StaticResource ButtonTemplate}"
+                        <TextBlock
+                            Style="{StaticResource ButtonTemplate}"
                             Width="{Binding DataContext.CellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
+                            Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+
+                            <TextBlock.InputBindings>
+                                <MouseBinding Command="{Binding ClickCommand}" MouseAction="LeftClick"/>
+                            </TextBlock.InputBindings>
+
+                        </TextBlock>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -31,5 +31,11 @@ namespace GraWZycie
         {
             new SettingsWindow().Show();
         }
+
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
     }
 }

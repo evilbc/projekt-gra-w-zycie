@@ -241,9 +241,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Button Click="ShowGameWindow" Grid.Row="0">Start</Button>
         <Button Click="ShowSettingsWindow" Grid.Row="1">Settings</Button>
-
+        <Button Click="Exit" Grid.Row="2">Exit</Button>
     </Grid>
 </Window>

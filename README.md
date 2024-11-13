@@ -8,7 +8,7 @@ R - random
 I - info / statistics
 C - clean
 Escape - return to main menu
-Up/Down - speed up / slow down
+Z/X - speed up / slow down
 ctrl+s - save
 ctrl+o - load
 ctrl + mouse scroll - zoom

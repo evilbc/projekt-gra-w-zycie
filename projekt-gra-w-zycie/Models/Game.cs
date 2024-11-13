@@ -16,13 +16,15 @@ namespace GraWZycie.Models
         private const string Separator = ",";
         public bool[,] Cells { get; set; }
         public int GenerationCount { get; private set; }
-        public int DeathCount { get; private set; }
-        public int BirthCount { get; private set; }
+        public int DeathCount => _deathCount;
+        public int BirthCount => _birthCount;
         public int Rows { get; }
         public int Cols { get; }
         private ISet<int> NeighboursToStayAlive { get; set; }
         private ISet<int> NeighboursToBirth { get; set; }
         private string Rules { get; }
+        private int _deathCount;
+        private int _birthCount;
 
 
 
@@ -38,18 +40,28 @@ namespace GraWZycie.Models
         public void CalculateNewGeneration()
         {
             bool[,] newGeneration = new bool[Rows, Cols];
-            for (int row = 0; row < Rows; row++)
+            var tasks = new List<Task>();
+            for (int i = 0; i < Rows; i++)
             {
-                for (int col = 0; col < Cols; col++)
+                for (int j = 0; j < Cols; j++)
                 {
-                    bool newState = CalculateCellState(row, col);
-                    newGeneration[row, col] = newState;
-                    bool currentState = Cells[row, col];
-                    if (currentState && !newState) DeathCount++;
-                    else if (!currentState && newState) BirthCount++;
+                    int row = i;
+                    int col = j;
+                    tasks.Add(Task.Run(() =>
+                    {
+                        bool newState = CalculateCellState(row, col);
+                        newGeneration[row, col] = newState;
+                        bool currentState = Cells[row, col];
+                        if (currentState && !newState)
+                            Interlocked.Increment(ref _deathCount);
+                        else if (!currentState && newState)
+                            Interlocked.Increment(ref _birthCount);
+                    }));
+                    
                 }
             }
 
+            Task.WhenAll(tasks).Wait();
             Cells = newGeneration;
             GenerationCount++;
         }
