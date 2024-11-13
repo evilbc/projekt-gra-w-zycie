@@ -17,6 +17,8 @@
         <KeyBinding Key="I" Command="{Binding ShowStatsCommand}"></KeyBinding>
         <KeyBinding Key="Up" Command="{Binding SpeedUpCommand}"></KeyBinding>
         <KeyBinding Key="Down" Command="{Binding SlowDownCommand}"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"></KeyBinding>
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}"></KeyBinding>
     </Window.InputBindings>
 
     <Window.Resources>
