@@ -27,14 +27,14 @@ namespace GraWZycie
         private readonly MainWindow _mainWindow;
 
         private readonly GameViewModel _game;
-        private bool _isReturnToMainMenu { get; set; }
+        private bool IsReturnToMainMenu { get; set; }
 
 
         public GameWindow(MainWindow mainWindow, int rows, int cols)
         {
             _mainWindow = mainWindow;
             InitializeComponent();
-            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(), new UserMessageService());
+            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(), new UserMessageService(), new FileService());
             DataContext = _game;
 
             CreateGrid();
@@ -68,22 +68,17 @@ namespace GraWZycie
 
         public void ReturnToMainMenu()
         {
-            _isReturnToMainMenu = true;
+            IsReturnToMainMenu = true;
             _mainWindow.Show();
             Close();
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            if (!_isReturnToMainMenu)
+            if (!IsReturnToMainMenu)
                 _mainWindow.Close();
 
             base.OnClosed(e);
-        }
-
-        private void AddBinding(ICommand command, Key key)
-        {
-            InputBindings.Add(new KeyBinding() { Command = command, Key = key });
         }
     }
 }

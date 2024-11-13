@@ -20,9 +20,10 @@ namespace GraWZycie.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IUserMessageService _userMessageService;
+        private readonly IFileService _fileService;
         public ObservableCollection<ObservableCollection<Cell>> Cells { get; }
-        public int Rows { get; }
-        public int Cols { get; }
+        public int Rows => _game.Rows;
+        public int Cols => _game.Cols;
         public ICommand NextGenerationCommand { get; }
         public ICommand RandomiseCommand { get; }
         public ICommand CleanCommand { get; }
@@ -31,6 +32,8 @@ namespace GraWZycie.ViewModels
         public ICommand SpeedUpCommand { get; }
         public ICommand SlowDownCommand { get; }
         public ICommand ShowStatsCommand { get; }
+        public ICommand SaveCommand { get; }
+        public ICommand LoadCommand { get; }
 
         private DispatcherTimer _gameTimer { get; }
         private List<TimeSpan> _timerSpeeds = [TimeSpan.FromSeconds(0.3), TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.75), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1.5), TimeSpan.FromSeconds(2)];
@@ -41,12 +44,12 @@ namespace GraWZycie.ViewModels
 
 
 
-        public GameViewModel(int rows, int cols, string rules, INavigationService navigationService, IUserMessageService userMessageService)
+        public GameViewModel(int rows, int cols, string rules, INavigationService navigationService, IUserMessageService userMessageService, IFileService fileService)
         {
             _navigationService = navigationService;
             _userMessageService = userMessageService;
-            Rows = rows;
-            Cols = cols;
+            _fileService = fileService;
+
             _game = new Game(rows, cols, rules);
 
             Cells = new ObservableCollection<ObservableCollection<Cell>>();
@@ -64,6 +67,8 @@ namespace GraWZycie.ViewModels
             SpeedUpCommand = new RelayCommand(() => ChangeTempo(true));
             SlowDownCommand = new RelayCommand(() => ChangeTempo(false));
             ShowStatsCommand = new RelayCommand(ShowStats);
+            SaveCommand = new RelayCommand(SaveToFile);
+            LoadCommand = new RelayCommand(LoadFromFile);
         }
 
         public void CalculateNewGeneration()
@@ -82,12 +87,13 @@ namespace GraWZycie.ViewModels
 
         private void InitCells()
         {
+            Cells.Clear();
             for (int row = 0; row < Rows; row++)
             {
                 var cellRow = new ObservableCollection<Cell>();
                 for (int col = 0; col < Cols; col++)
                 {
-                    var cell = new Cell(false, row, col);
+                    var cell = new Cell(_game.Cells[row, col], row, col);
                     cell.CellStateChanged += CellStateChangedHandler;
                     cellRow.Add(cell);
                 }
@@ -153,10 +159,20 @@ namespace GraWZycie.ViewModels
 
         private void ShowStats()
         {
-            _userMessageService.ShowMessage($"Liczba pokoleń: {_game.GenerationCount}, liczba umarłych: {_game.DeathCount}, liczba urodzonych: {_game.BirthCount}");
+            _userMessageService.ShowMessage($"Generation count: {_game.GenerationCount}, death count: {_game.DeathCount}, birth count: {_game.BirthCount}");
         }
 
+        private void SaveToFile()
+        {
+            string save = _game.CreateSaveState();
+            _fileService.SaveToFile(save);
 
+        }
+
+        private void LoadFromFile()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

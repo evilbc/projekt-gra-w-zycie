@@ -16,8 +16,8 @@ namespace GraWZycie.Models
         public int GenerationCount { get; private set; } = 0;
         public int DeathCount { get; private set; } = 0;
         public int BirthCount { get; private set; } = 0;
-        private int Rows { get; }
-        private int Cols { get; }
+        public int Rows { get; }
+        public int Cols { get; }
         private ISet<int> NeighboursToStayAlive { get; set; }
         private ISet<int> NeighboursToBirth { get; set; }
 
@@ -88,6 +88,22 @@ namespace GraWZycie.Models
         {
             NeighboursToBirth = rules[1..rules.IndexOf('/')].Select(c => int.Parse(c.ToString())).ToHashSet();
             NeighboursToStayAlive = rules[(rules.IndexOf('S') + 1)..].Select(c => int.Parse(c.ToString())).ToHashSet();
+        }
+
+        public string CreateSaveState()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Rows);
+            sb.Append(",").Append(Cols);
+            for (int row = 0; row<Rows; row++)
+            {
+                for (int col = 0; col < Cols; col++)
+                {
+                    sb.Append(",").Append(Cells[row, col]);
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }
