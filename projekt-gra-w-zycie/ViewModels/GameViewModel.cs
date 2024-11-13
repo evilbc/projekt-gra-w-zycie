@@ -11,8 +11,10 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using GraWZycie.Models;
+using GraWZycie.Services;
 
-namespace GraWZycie
+namespace GraWZycie.ViewModels
 {
     public class GameViewModel : INotifyPropertyChanged
     {

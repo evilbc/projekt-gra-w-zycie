@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using GraWZycie.Services;
+using GraWZycie.ViewModels;
 
 namespace GraWZycie
 {
@@ -36,20 +38,6 @@ namespace GraWZycie
             DataContext = _game;
 
             CreateGrid();
-            CreateKeyBindings();
-
-        }
-
-        private void CreateKeyBindings()
-        {
-            AddBinding(_game.ReturnToMainMenuCommand, Key.Escape);
-            AddBinding(_game.NextGenerationCommand, Key.A);
-            AddBinding(_game.RandomiseCommand, Key.R);
-            AddBinding(_game.CleanCommand, Key.C);
-            AddBinding(_game.ToggleAutoplayCommand, Key.P);
-            AddBinding(_game.ShowStatsCommand, Key.I);
-            AddBinding(_game.SpeedUpCommand, Key.Up);
-            AddBinding(_game.SlowDownCommand, Key.Down);
         }
 
         private void CreateGrid()

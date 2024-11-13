@@ -3,12 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GraWZycie" d:DataContext="{d:DesignInstance Type=local:GameViewModel}"
+        xmlns:local="clr-namespace:GraWZycie"
+        xmlns:viewModels="clr-namespace:GraWZycie.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewModels:GameViewModel}"
         mc:Ignorable="d"
         Title="GameWindow" Height="450" Width="800">
-    <Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding ReturnToMainMenuCommand}"></KeyBinding>
+        <KeyBinding Key="A" Command="{Binding NextGenerationCommand}"></KeyBinding>
+        <KeyBinding Key="R" Command="{Binding RandomiseCommand}"></KeyBinding>
+        <KeyBinding Key="C" Command="{Binding CleanCommand}"></KeyBinding>
+        <KeyBinding Key="P" Command="{Binding ToggleAutoplayCommand}"></KeyBinding>
+        <KeyBinding Key="I" Command="{Binding ShowStatsCommand}"></KeyBinding>
+        <KeyBinding Key="Up" Command="{Binding SpeedUpCommand}"></KeyBinding>
+        <KeyBinding Key="Down" Command="{Binding SlowDownCommand}"></KeyBinding>
+    </Window.InputBindings>
 
-        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=local:Cell}"> -->
+    <Window.Resources>
+        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
         <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
 
             <Border x:Name="border" BorderBrush="Gray" BorderThickness="1">
