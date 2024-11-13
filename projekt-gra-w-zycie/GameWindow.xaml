@@ -24,32 +24,24 @@
     <Window.Resources>
         <local:BooleanToScrollBarVisibilityConverter x:Key="BooleanToScrollBarVisibilityConverter"/>
 
-        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="TextBlock" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
-        <Style x:Key="ButtonTemplate" TargetType="TextBlock">
+        <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
 
-            <!-- <Border x:Name="border" BorderBrush="Gray" BorderThickness="1"> -->
-            <!--     <Border.Background> -->
-            <!--         <SolidColorBrush x:Name="brush" Color="White"></SolidColorBrush> -->
-            <!--     </Border.Background> -->
-            <!--     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" /> -->
-            <!-- </Border> -->
-            <Setter Property="TextBlock.VerticalAlignment" Value="Center" />
-            <Setter Property="TextBlock.HorizontalAlignment" Value="Center" />
-
-            <!-- Border wrapping the TextBlock for button-like appearance -->
-            <Setter Property="Background" Value="White" />
-            <!-- <Setter Property="BorderBrush" Value="Gray" /> -->
-            <!-- <Setter Property="BorderThickness" Value="1" /> -->
+            <Border x:Name="border" BorderBrush="Gray" BorderThickness="1">
+                <Border.Background>
+                    <SolidColorBrush x:Name="brush" Color="White"></SolidColorBrush>
+                </Border.Background>
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
 
 
-
-            <Style.Triggers>
+            <ControlTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsAlive}" Value="True">
                     <DataTrigger.EnterActions>
                         <BeginStoryboard x:Name="ToBlackStoryboard">
                             <Storyboard>
-                                <ColorAnimation
-                                                Storyboard.TargetProperty="(TextBlock.Background).(SolidColorBrush.Color)"
+                                <ColorAnimation Storyboard.TargetName="brush"
+                                                Storyboard.TargetProperty="Color"
                                                 To="Black" Duration="0:0:0.2" />
                             </Storyboard>
                         </BeginStoryboard>
@@ -63,8 +55,8 @@
                     <DataTrigger.EnterActions>
                         <BeginStoryboard x:Name="ToWhiteStoryboard">
                             <Storyboard>
-                                <ColorAnimation
-                                                Storyboard.TargetProperty="(TextBlock.Background).(SolidColorBrush.Color)"
+                                <ColorAnimation Storyboard.TargetName="brush"
+                                                Storyboard.TargetProperty="Color"
                                                 To="White" Duration="0:0:0.2" />
                             </Storyboard>
                         </BeginStoryboard>
@@ -73,8 +65,8 @@
                         <StopStoryboard BeginStoryboardName="ToWhiteStoryboard" />
                     </DataTrigger.ExitActions>
                 </DataTrigger>
-            </Style.Triggers>
-        </Style>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
 
     <Grid x:Name="Board">
@@ -94,16 +86,11 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock
-                            Style="{StaticResource ButtonTemplate}"
+                        <Button 
+                            Command="{Binding ClickCommand}" 
+                            Template="{StaticResource ButtonTemplate}"
                             Width="{Binding DataContext.CellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
-
-                            <TextBlock.InputBindings>
-                                <MouseBinding Command="{Binding ClickCommand}" MouseAction="LeftClick"/>
-                            </TextBlock.InputBindings>
-
-                        </TextBlock>
+                            Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
