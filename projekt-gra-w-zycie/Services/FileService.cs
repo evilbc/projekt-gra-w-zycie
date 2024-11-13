@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 
 namespace GraWZycie.Services
 {
@@ -13,17 +14,19 @@ namespace GraWZycie.Services
     {
         void SaveToFile(string data);
 
-        string LoadFromFile();
+        string? LoadFromFile(string prompt);
     }
 
     internal class FileService: IFileService
     {
+        private const string Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
         public void SaveToFile(string data)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Title = "Save File As",
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                Filter = Filter,
                 DefaultExt = "txt"
             };
 
@@ -41,9 +44,21 @@ namespace GraWZycie.Services
 
         }
 
-        public string LoadFromFile()
+        public string? LoadFromFile(string prompt)
         {
-            throw new NotImplementedException();
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = prompt,
+                Filter = Filter,
+                DefaultExt = "txt"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                return File.ReadAllText(openFileDialog.FileName);
+            }
+
+            return null;
         }
     }
 }

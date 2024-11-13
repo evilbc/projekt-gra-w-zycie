@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,14 +13,16 @@ namespace GraWZycie.Models
 {
     public class Game
     {
+        private const string Separator = ",";
         public bool[,] Cells { get; set; }
-        public int GenerationCount { get; private set; } = 0;
-        public int DeathCount { get; private set; } = 0;
-        public int BirthCount { get; private set; } = 0;
+        public int GenerationCount { get; private set; }
+        public int DeathCount { get; private set; }
+        public int BirthCount { get; private set; }
         public int Rows { get; }
         public int Cols { get; }
         private ISet<int> NeighboursToStayAlive { get; set; }
         private ISet<int> NeighboursToBirth { get; set; }
+        private string Rules { get; }
 
 
 
@@ -28,6 +31,7 @@ namespace GraWZycie.Models
             Cells = new bool[rows, cols];
             Rows = rows;
             Cols = cols;
+            Rules = rules;
             ParseRules(rules);
         }
 
@@ -93,17 +97,38 @@ namespace GraWZycie.Models
         public string CreateSaveState()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(Rows);
-            sb.Append(",").Append(Cols);
+            sb.Append(Rules);
+            sb.Append(Separator).Append(Rows);
+            sb.Append(Separator).Append(Cols);
             for (int row = 0; row<Rows; row++)
             {
                 for (int col = 0; col < Cols; col++)
                 {
-                    sb.Append(",").Append(Cells[row, col]);
+                    sb.Append(Separator).Append(Cells[row, col]);
                 }
             }
 
             return sb.ToString();
+        }
+
+        public static Game LoadSaveState(string save)
+        {
+            var arr = save.Split(Separator);
+            string rules = arr[0];
+            int rows = int.Parse(arr[1]);
+            int cols = int.Parse(arr[2]);
+            var game = new Game(rows, cols, rules);
+            int index = 3;
+            
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < cols; col++)
+                {
+                    game.Cells[row, col] = bool.Parse(arr[index++]);
+                }
+            }
+
+            return game;
         }
     }
 }

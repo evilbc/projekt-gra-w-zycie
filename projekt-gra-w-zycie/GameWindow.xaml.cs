@@ -36,34 +36,6 @@ namespace GraWZycie
             InitializeComponent();
             _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(), new UserMessageService(), new FileService());
             DataContext = _game;
-
-            CreateGrid();
-        }
-
-        private void CreateGrid()
-        {
-
-            for (int row = 0; row < _game.Rows; row++)
-            {
-                Board.RowDefinitions.Add(new RowDefinition());
-
-                for (int col = 0; col < _game.Cols; col++)
-                {
-                    if (row == 0)
-                        Board.ColumnDefinitions.Add(new ColumnDefinition());
-
-
-                    Button button = new Button();
-                    var cell = _game.Cells[row][col];
-                    button.DataContext = cell;
-                    button.Template = (ControlTemplate)FindResource("ButtonTemplate");
-                    button.Command = cell.ClickCommand;
-                    Grid.SetRow(button, row);
-                    Grid.SetColumn(button, col);
-
-                    Board.Children.Add(button);
-                }
-            }
         }
 
         public void ReturnToMainMenu()

@@ -21,9 +21,9 @@ namespace GraWZycie.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IUserMessageService _userMessageService;
         private readonly IFileService _fileService;
-        public ObservableCollection<ObservableCollection<Cell>> Cells { get; }
-        public int Rows => _game.Rows;
-        public int Cols => _game.Cols;
+        public ObservableCollection<Cell> Cells { get; }
+        public int Rows => Game.Rows;
+        public int Cols => Game.Cols;
         public ICommand NextGenerationCommand { get; }
         public ICommand RandomiseCommand { get; }
         public ICommand CleanCommand { get; }
@@ -40,7 +40,7 @@ namespace GraWZycie.ViewModels
         private int _timerSpeedIndex = 3;
 
 
-        private readonly Game _game;
+        private Game Game { get; set; }
 
 
 
@@ -50,9 +50,9 @@ namespace GraWZycie.ViewModels
             _userMessageService = userMessageService;
             _fileService = fileService;
 
-            _game = new Game(rows, cols, rules);
+            Game = new Game(rows, cols, rules);
 
-            Cells = new ObservableCollection<ObservableCollection<Cell>>();
+            Cells = new ObservableCollection<Cell>();
             InitCells();
 
             _gameTimer = new DispatcherTimer();
@@ -73,12 +73,12 @@ namespace GraWZycie.ViewModels
 
         public void CalculateNewGeneration()
         {
-            _game.CalculateNewGeneration();
+            Game.CalculateNewGeneration();
             for (int row = 0; row < Rows; row++)
             {
                 for (int col = 0; col < Cols; col++)
                 {
-                    Cells[row][col].IsAlive = _game.Cells[row, col];
+                    Cells[GetCellIndex(row, col)].IsAlive = Game.Cells[row, col];
                 }
             }
 
@@ -87,17 +87,14 @@ namespace GraWZycie.ViewModels
 
         private void InitCells()
         {
-            Cells.Clear();
             for (int row = 0; row < Rows; row++)
             {
-                var cellRow = new ObservableCollection<Cell>();
                 for (int col = 0; col < Cols; col++)
                 {
-                    var cell = new Cell(_game.Cells[row, col], row, col);
+                    var cell = new Cell(Game.Cells[row, col], row, col);
                     cell.CellStateChanged += CellStateChangedHandler;
-                    cellRow.Add(cell);
+                    Cells.Add(cell);
                 }
-                Cells.Add(cellRow);
             }
         }
 
@@ -112,31 +109,24 @@ namespace GraWZycie.ViewModels
         {
             if (sender is Cell cell)
             {
-                _game.Cells[cell.Row, cell.Col] = cell.IsAlive;
+                Game.Cells[cell.Row, cell.Col] = cell.IsAlive;
             }
         }
 
         private void Randomise()
         {
-            Random r = new();
-            for (int row = 0; row < Rows; row++)
+            var r = new Random();
+            foreach (var cell in Cells)
             {
-                for (int col = 0; col < Cols; col++)
-                {
-                    Cells[row][col].IsAlive = r.NextDouble() > 0.5;
-                }
+                cell.IsAlive = r.NextDouble() > 0.5;
             }
-
         }
 
         private void Clean()
         {
-            for (int row = 0; row < Rows; row++)
+            foreach (var cell in Cells)
             {
-                for (int col = 0; col < Cols; col++)
-                {
-                    Cells[row][col].IsAlive = false;
-                }
+                cell.IsAlive = false;
             }
         }
 
@@ -159,19 +149,42 @@ namespace GraWZycie.ViewModels
 
         private void ShowStats()
         {
-            _userMessageService.ShowMessage($"Generation count: {_game.GenerationCount}, death count: {_game.DeathCount}, birth count: {_game.BirthCount}");
+            _userMessageService.ShowMessage($"Generation count: {Game.GenerationCount}, death count: {Game.DeathCount}, birth count: {Game.BirthCount}");
         }
 
         private void SaveToFile()
         {
-            string save = _game.CreateSaveState();
+            string save = Game.CreateSaveState();
             _fileService.SaveToFile(save);
 
         }
 
         private void LoadFromFile()
         {
-            throw new NotImplementedException();
+            string? save = _fileService.LoadFromFile("Choose your save file");
+            if (save == null)
+                return;
+            
+            var newGame = Game.LoadSaveState(save);
+            Game = newGame;
+
+            Cells.Clear();
+            InitCells();
+            // for (int row = 0; row < Rows; row++)
+            // {
+            //     for (int col = 0; col < Cols; col++)
+            //     {
+            //         Cells[GetCellIndex(row, col)].IsAlive = Game.Cells[row, col];
+            //     }
+            // }
+            OnPropertyChanged(nameof(Cells));
+            OnPropertyChanged(nameof(Rows));
+            OnPropertyChanged(nameof(Cols));
+        }
+
+        private int GetCellIndex(int row, int col)
+        {
+            return row * Cols + col;
         }
 
     }
