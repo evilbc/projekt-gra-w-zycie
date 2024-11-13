@@ -34,5 +34,29 @@ namespace GraWZycie.Properties {
                 this["Ruleset"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int Rows {
+            get {
+                return ((int)(this["Rows"]));
+            }
+            set {
+                this["Rows"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int Cols {
+            get {
+                return ((int)(this["Cols"]));
+            }
+            set {
+                this["Cols"] = value;
+            }
+        }
     }
 }

@@ -23,20 +23,17 @@ namespace GraWZycie
     public partial class GameWindow : Window
     {
         private readonly MainWindow _mainWindow;
-        private const int Rows = 50;
-
-        private const int Cols = 50;
 
         private DispatcherTimer _gameTimer { get; }
         private readonly GameViewModel _game;
         private bool _isReturnToMainMenu { get; set; }
 
 
-        public GameWindow(MainWindow mainWindow)
+        public GameWindow(MainWindow mainWindow, int rows, int cols)
         {
             _mainWindow = mainWindow;
             InitializeComponent();
-            _game = new GameViewModel(Rows, Cols, Properties.Settings.Default.Ruleset);
+            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset);
             DataContext = _game;
 
             CreateGrid();

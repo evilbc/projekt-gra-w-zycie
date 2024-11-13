@@ -23,8 +23,13 @@ namespace GraWZycie
 
         private void ShowGameWindow(object sender, RoutedEventArgs e)
         {
-            new GameWindow(this).Show();
+            new GameWindow(this, Properties.Settings.Default.Rows, Properties.Settings.Default.Cols).Show();
             Hide();
+        }
+
+        private void ShowSettingsWindow(object sender, RoutedEventArgs e)
+        {
+            new SettingsWindow().Show();
         }
     }
 }

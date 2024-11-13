@@ -8,6 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button Click="ShowGameWindow" Height="59" Margin="40,31,34,0" Name="button1" VerticalAlignment="Top">Start</Button>
+        <Button Click="ShowSettingsWindow" Height="59" Margin="40,159,34,0" Name="button2" VerticalAlignment="Top">Settings</Button>
 
     </Grid>
 </Window>
