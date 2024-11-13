@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -16,6 +17,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using GraWZycie.Services;
 using GraWZycie.ViewModels;
+using Microsoft.Xaml.Behaviors;
 
 namespace GraWZycie
 {
@@ -34,7 +36,8 @@ namespace GraWZycie
         {
             _mainWindow = mainWindow;
             InitializeComponent();
-            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(), new UserMessageService(), new FileService());
+            _game = new GameViewModel(rows, cols, Properties.Settings.Default.Ruleset, new NavigationService(),
+                new UserMessageService(), new FileService());
             DataContext = _game;
         }
 
@@ -52,5 +55,22 @@ namespace GraWZycie
 
             base.OnClosed(e);
         }
+
+        private void PreviewZoomMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Delta > 0) _game.ZoomInCommand.Execute(null);
+                else _game.ZoomOutCommand.Execute(null);
+                e.Handled = true;
+            }
+        }
+
+        private void SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _game.AvailableWidth = e.NewSize.Width;
+            _game.AvailableHeight = e.NewSize.Height;
+        }
+
     }
 }

@@ -7,21 +7,23 @@
         xmlns:viewModels="clr-namespace:GraWZycie.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewModels:GameViewModel}"
         mc:Ignorable="d"
-        Title="GameWindow" Height="450" Width="800">
+        Title="GameWindow" Height="450" Width="800" PreviewMouseWheel="PreviewZoomMouseWheel">
     <Window.InputBindings>
-        <KeyBinding Key="Escape" Command="{Binding ReturnToMainMenuCommand}"></KeyBinding>
-        <KeyBinding Key="A" Command="{Binding NextGenerationCommand}"></KeyBinding>
-        <KeyBinding Key="R" Command="{Binding RandomiseCommand}"></KeyBinding>
-        <KeyBinding Key="C" Command="{Binding CleanCommand}"></KeyBinding>
-        <KeyBinding Key="P" Command="{Binding ToggleAutoplayCommand}"></KeyBinding>
-        <KeyBinding Key="I" Command="{Binding ShowStatsCommand}"></KeyBinding>
-        <KeyBinding Key="Up" Command="{Binding SpeedUpCommand}"></KeyBinding>
-        <KeyBinding Key="Down" Command="{Binding SlowDownCommand}"></KeyBinding>
-        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"></KeyBinding>
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}"></KeyBinding>
+        <KeyBinding Key="Escape" Command="{Binding ReturnToMainMenuCommand}" />
+        <KeyBinding Key="A" Command="{Binding NextGenerationCommand}" />
+        <KeyBinding Key="R" Command="{Binding RandomiseCommand}" />
+        <KeyBinding Key="C" Command="{Binding CleanCommand}" />
+        <KeyBinding Key="P" Command="{Binding ToggleAutoplayCommand}" />
+        <KeyBinding Key="I" Command="{Binding ShowStatsCommand}" />
+        <KeyBinding Key="Up" Command="{Binding SpeedUpCommand}" />
+        <KeyBinding Key="Down" Command="{Binding SlowDownCommand}" />
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
     </Window.InputBindings>
 
     <Window.Resources>
+        <local:BooleanToScrollBarVisibilityConverter x:Key="BooleanToScrollBarVisibilityConverter"/>
+
         <!-- <ControlTemplate x:Key="ButtonTemplate" TargetType="Button" d:DataContext="{d:DesignInstance Type=viewModels:Cell}"> -->
         <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
 
@@ -68,20 +70,28 @@
     </Window.Resources>
 
     <Grid x:Name="Board">
-        <ItemsControl ItemsSource="{Binding Cells}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="{Binding Rows}" Columns="{Binding Cols}" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}" VerticalScrollBarVisibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToScrollBarVisibilityConverter}}" SizeChanged="SizeChanged" xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
+            <i:Interaction.Behaviors>
+                <HorizontalScrollBehavior />
+            </i:Interaction.Behaviors>
+            <ItemsControl ItemsSource="{Binding Cells}">
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button 
-                        Command="{Binding ClickCommand}" 
-                        Template="{StaticResource ButtonTemplate}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="{Binding Rows}" Columns="{Binding Cols}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button 
+                            Command="{Binding ClickCommand}" 
+                            Template="{StaticResource ButtonTemplate}"
+                            Width="{Binding DataContext.CellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>

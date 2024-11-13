@@ -24,23 +24,75 @@ namespace GraWZycie.ViewModels
         public ObservableCollection<Cell> Cells { get; }
         public int Rows => Game.Rows;
         public int Cols => Game.Cols;
-        public ICommand NextGenerationCommand { get; }
-        public ICommand RandomiseCommand { get; }
-        public ICommand CleanCommand { get; }
-        public ICommand ReturnToMainMenuCommand { get; }
-        public ICommand ToggleAutoplayCommand { get; }
-        public ICommand SpeedUpCommand { get; }
-        public ICommand SlowDownCommand { get; }
-        public ICommand ShowStatsCommand { get; }
-        public ICommand SaveCommand { get; }
-        public ICommand LoadCommand { get; }
+        public ICommand NextGenerationCommand => new RelayCommand(CalculateNewGeneration);
+        public ICommand RandomiseCommand => new RelayCommand(Randomise);
+        public ICommand CleanCommand => new RelayCommand(Clean);
+        public ICommand ReturnToMainMenuCommand => new RelayCommand(_navigationService.ReturnToMainMenu);
+        public ICommand ToggleAutoplayCommand => new RelayCommand(ToggleAutoplay);
+        public ICommand SpeedUpCommand => new RelayCommand(() => ChangeTempo(true));
+        public ICommand SlowDownCommand => new RelayCommand(() => ChangeTempo(false));
+        public ICommand ShowStatsCommand => new RelayCommand(ShowStats);
+        public ICommand SaveCommand => new RelayCommand(SaveToFile);
+        public ICommand LoadCommand => new RelayCommand(LoadFromFile);
+        public ICommand ZoomInCommand => new RelayCommand(ZoomIn);
+        public ICommand ZoomOutCommand => new RelayCommand(ZoomOut);
+
+        private double _availableWidth;
+        public double AvailableWidth
+        {
+            get => _availableWidth;
+            set
+            {
+                _availableWidth = value;
+                OnPropertyChanged(nameof(CellWidth));
+            }
+        }
+        private double _availableHeight;
+        public double AvailableHeight
+        {
+            get => _availableHeight;
+            set
+            {
+                _availableHeight = value;
+                OnPropertyChanged(nameof(CellHeight));
+            }
+        }
+        public double CellWidth => AvailableWidth / Cols * Zoom;
+        public double CellHeight => AvailableHeight / Cols * Zoom;
+
 
         private DispatcherTimer _gameTimer { get; }
         private List<TimeSpan> _timerSpeeds = [TimeSpan.FromSeconds(0.3), TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.75), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1.5), TimeSpan.FromSeconds(2)];
         private int _timerSpeedIndex = 3;
 
+        private double _zoom = 1.0;
+        public double Zoom
+        {
+            get => _zoom;
+            set
+            {
+                _zoom = value;
+                OnPropertyChanged(nameof(Zoom));
+                OnPropertyChanged(nameof(CellHeight));
+                OnPropertyChanged(nameof(CellWidth));
+                OnPropertyChanged(nameof(IsScrollVisible));
+            }
+        }
+        public bool IsScrollVisible => Zoom > 1.0;
 
-        private Game Game { get; set; }
+
+        private Game _game;
+
+        private Game Game
+        {
+            get => _game;
+            set
+            {
+                _game = value;
+                OnPropertyChanged(nameof(Cols));
+                OnPropertyChanged(nameof(Rows));
+            }
+        }
 
 
 
@@ -58,17 +110,6 @@ namespace GraWZycie.ViewModels
             _gameTimer = new DispatcherTimer();
             _gameTimer.Interval = _timerSpeeds[_timerSpeedIndex];
             _gameTimer.Tick += (sender, args) => CalculateNewGeneration();
-
-            NextGenerationCommand = new RelayCommand(CalculateNewGeneration);
-            RandomiseCommand = new RelayCommand(Randomise);
-            CleanCommand = new RelayCommand(Clean);
-            ReturnToMainMenuCommand = new RelayCommand(_navigationService.ReturnToMainMenu);
-            ToggleAutoplayCommand = new RelayCommand(ToggleAutoplay);
-            SpeedUpCommand = new RelayCommand(() => ChangeTempo(true));
-            SlowDownCommand = new RelayCommand(() => ChangeTempo(false));
-            ShowStatsCommand = new RelayCommand(ShowStats);
-            SaveCommand = new RelayCommand(SaveToFile);
-            LoadCommand = new RelayCommand(LoadFromFile);
         }
 
         public void CalculateNewGeneration()
@@ -170,22 +211,24 @@ namespace GraWZycie.ViewModels
 
             Cells.Clear();
             InitCells();
-            // for (int row = 0; row < Rows; row++)
-            // {
-            //     for (int col = 0; col < Cols; col++)
-            //     {
-            //         Cells[GetCellIndex(row, col)].IsAlive = Game.Cells[row, col];
-            //     }
-            // }
             OnPropertyChanged(nameof(Cells));
-            OnPropertyChanged(nameof(Rows));
-            OnPropertyChanged(nameof(Cols));
         }
 
         private int GetCellIndex(int row, int col)
         {
             return row * Cols + col;
         }
+
+        private void ZoomIn()
+        {
+            Zoom += 0.1;
+        }
+
+        private void ZoomOut()
+        {
+            Zoom = Math.Max(1, Zoom - 0.1);
+        }
+
 
     }
 }

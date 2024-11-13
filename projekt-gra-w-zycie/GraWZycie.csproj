@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="HorizontalScroll" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

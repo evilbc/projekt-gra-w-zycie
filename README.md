@@ -11,5 +11,6 @@ Escape - return to main menu
 Up/Down - speed up / slow down
 ctrl+s - save
 ctrl+o - load
-
-Mouse scroll - zoom
+ctrl + mouse scroll - zoom
+mouse wheel - scroll up and down
+shift + mouse wheel - scroll left and right
